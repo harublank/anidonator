@@ -1,6 +1,5 @@
-import { Mongo } from 'meteor/mongo'
+import { aniAdminsCollection } from './aniAdminCollection'
 
 
-export const aniAdminsCollection = new Mongo.Collection("aniAdmins")
-
-export const orgUserRelationsCollection = new Mongo.Collection("orgUserRelations")
+const orgUserRelationsCollection = new Mongo.Collection("orgUserRelations")
+export { aniAdminsCollection, orgUserRelationsCollection }

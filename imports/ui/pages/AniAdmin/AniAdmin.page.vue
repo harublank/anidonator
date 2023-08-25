@@ -1,0 +1,3 @@
+<template>
+    Ani admin
+</template>

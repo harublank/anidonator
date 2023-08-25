@@ -10,3 +10,10 @@ export const SEED_KA = {
     name: "The Truth",
     role: ROLES.ani_admin
 }
+
+export const ROUTES = {
+    login: '/login',
+    aniAdmin: "/aniAdmin",
+    orgAdmin: "/orgAdmin",
+    orgCoordinator: "/orgCoordinator"
+}

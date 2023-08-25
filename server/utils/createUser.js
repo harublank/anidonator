@@ -11,7 +11,7 @@
 
 import { Accounts } from "meteor/accounts-base"
 import { ROLES } from "../../imports/data"
-import { orgUserRelationsCollection } from "../../imports/api/collections"
+import { orgUserRelationsCollection, aniAdminsCollection } from "../../imports/api/collections"
 
 export const createUser = ({
     email,
@@ -34,7 +34,7 @@ export const createUser = ({
             userId
         }, (error, response) => {
             if (error) {
-                // 
+                console.log("Error")
             } else {
                 //
             }
