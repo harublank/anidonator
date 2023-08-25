@@ -12,7 +12,7 @@ const inputFielChangeHandler = (name: 'email' | 'password', value: string) => {
 }
 
 const loginHandler = () => {
-
+    console.log(userCredentials.value)
 }
 
 </script>
@@ -21,9 +21,10 @@ const loginHandler = () => {
         <div class="w-[25rem] h-full grid content-center">
             <div class="w-3/4 m-auto">
                 <form @submit.prevent="loginHandler">
-                    <Input @on-change="inputFielChangeHandler" type="email" name="email"
+                    <Input required @on-change="inputFielChangeHandler" type="email" name="email"
                         placeholder="uchiha_madara@naruto.com" />
-                    <Input @on-change="inputFielChangeHandler" type="password" name="password" placeholder="********" />
+                    <Input required @on-change="inputFielChangeHandler" type="password" name="password"
+                        placeholder="********" />
                     <Button class="w-full" type="submit">
                         Login
                     </Button>
