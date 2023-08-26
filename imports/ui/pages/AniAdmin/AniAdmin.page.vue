@@ -1,3 +1,7 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-    Ani admin
+    lol chat :)
 </template>

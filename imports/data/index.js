@@ -13,7 +13,11 @@ export const SEED_KA = {
 
 export const ROUTES = {
     login: '/login',
-    aniAdmin: "/aniAdmin",
+    aniAdmin: {
+        base: "/aniAdmin",
+        org: "/aniAdmin/org",
+        user: "/aniAdmin/user",
+    },
     orgAdmin: "/orgAdmin",
     orgCoordinator: "/orgCoordinator"
 }

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { OrgAdminShell } from '../ui/components'
 import { LoginPage, AniAdminPage } from '../ui/pages'
 import { ROUTES } from '../data'
+
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -10,9 +12,15 @@ export const router = createRouter({
       component: LoginPage,
     },
     {
-      path: ROUTES.aniAdmin,
-      name: "Where Everything starts",
-      component: AniAdminPage
+      path: ROUTES.aniAdmin.base,
+      component: OrgAdminShell,
+      children: [
+        {
+          path: "",
+          name: "Where Everything starts",
+          component: AniAdminPage
+        }
+      ]
     }
 
   ],

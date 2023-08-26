@@ -87,7 +87,7 @@ onMounted(() => {
         </div>
 
         <div
-            class="flex-1 bg-cover bg-center bg-no-repeat bg-[url('https://mcdn.wallpapersafari.com/medium/45/30/5Q6cL2.jpg')]">
+            class="flex-1 bg-contain bg-center bg-no-repeat bg-[url('https://mcdn.wallpapersafari.com/medium/45/30/5Q6cL2.jpg')]">
         </div>
     </div>
 </template>
