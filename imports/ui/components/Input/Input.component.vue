@@ -10,11 +10,14 @@ const props = defineProps({
         default: 'text',
         type: String,
         validator: (value: string) => {
-            const inputTypes = ["text", "password", "email"]
+            const inputTypes = ["text", "password", "email", 'number']
             const isTypeAllowed = inputTypes.includes(value)
             return isTypeAllowed
         }
 
+    },
+    label: {
+        type: String
     },
     placeholder: {
         required: true,
@@ -43,7 +46,7 @@ watch(value, (newValue) => {
 <template>
     <div class="mb-4">
         <label :for="props.name" class="block mb-1 text-sm font-medium text-gray-700">
-            <slot></slot>
+            {{ label }}
         </label>
 
         <div class="relative">

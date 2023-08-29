@@ -9,44 +9,43 @@
 }
 */
 
-import { Accounts } from "meteor/accounts-base"
-import { ROLES } from "../../imports/data"
-import { orgUserRelationsCollection, aniAdminsCollection } from "../../imports/api/collections"
+import { Accounts } from "meteor/accounts-base";
+import { ROLES } from "../../imports/data";
+import {
+  orgUserRelationsCollection,
+  aniAdminsCollection,
+} from "../../imports/api/collections";
 
-export const createUser = ({
+export const createUser = ({ email, password, name, role }) => {
+  const userId = Accounts.createUser({
     email,
     password,
-    name,
-    role,
-}) => {
+    profile: {
+      name,
+    },
+  });
 
-    const userId = Accounts.createUser({
-        email,
-        password,
-        profile: {
-            name
+  const isCreatingAniAdmin = role === ROLES.ani_admin;
+  if (isCreatingAniAdmin) {
+    aniAdminsCollection.insert(
+      {
+        userId,
+      },
+      (error, response) => {
+        if (error) {
+          console.log("Error");
+        } else {
+          //
         }
-    })
+      }
+    );
+  } else {
+    // orgUserRelationsCollection.insert({
+    //     userId,
+    //     role
+    // }, () => {
+    // })
+  }
 
-    const isCreatingAniAdmin = role === ROLES.ani_admin
-    if (isCreatingAniAdmin) {
-        aniAdminsCollection.insert({
-            userId
-        }, (error, response) => {
-            if (error) {
-                console.log("Error")
-            } else {
-                //
-            }
-        })
-    } else {
-        orgUserRelationsCollection.insert({
-            userId,
-            role
-        }, () => {
-
-        })
-    }
-
-    return userId
-}
+  return userId;
+};

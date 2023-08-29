@@ -5,11 +5,11 @@
         </div>
 
         <div class="flex-1 gap-2 flex flex-col">
-            <div class="h-16">
+            <div class="h-16 bg-blue-100">
                 <slot name="header"></slot>
             </div>
 
-            <div class="pl-4">
+            <div class="px-4">
                 <router-view />
             </div>
         </div>

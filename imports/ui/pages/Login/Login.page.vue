@@ -2,7 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import { onMounted, ref } from 'vue';
 import { Button, Input } from '../../components';
-import { isAniAdmin } from '../../utils'
+import { isOrgAdmin } from '../../utils'
 import { useRouter } from 'vue-router';
 import { ROUTES } from '../../../data'
 
@@ -47,14 +47,16 @@ const loginHandler = () => {
 
         if (someoneIsLoggedIn) {
             const { _id: userId } = loggedInUser
-            const _isAniAdminm = isAniAdmin(userId)
 
-            if (_isAniAdminm) {
-                router.push(ROUTES.aniAdmin)
-            } else {
-                // must be OA OR OC
+            router.push(ROUTES.aniAdmin.base)
 
-            }
+            return
+            // const _isAniAdminm = isAniAdmin(userId)
+            // if (_isAniAdminm) {
+            //     router.push(ROUTES.aniAdmin.base)
+            // }
+
+            // const _isOrgAdmin = isOrgAdmin(userId)
 
 
         }

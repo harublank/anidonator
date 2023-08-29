@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Appshell, SidebarLink } from '../index'
+import { Appshell, SidebarLink, Avatar, Button } from '../index'
 import { ROUTES } from '../../../data'
 import { nanoid } from 'nanoid'
+import { Meteor } from 'meteor/meteor';
+import { useRouter } from 'vue-router';
 
 const linkItems = [
     {
@@ -23,13 +25,23 @@ const linkItems = [
         id: nanoid()
     }
 ]
+const router = useRouter()
+const logoutHandler = () => {
+    Meteor.logout((error) => {
+        if (error) {
+            console.log({ error })
+        }
+    })
+    router.push(ROUTES.login)
+
+}
 </script>
 
 <template>
     <Appshell>
         <template v-slot:sidebar>
             <div class="p-4 bg-blue-100 h-full">
-                <div class="border-b-2 pb-4 border-x-cyan-950">
+                <div class="mb-4">
                     <svg id="logo-80" width="84" height="40" viewBox="0 0 84 40" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path class="ccustom"
@@ -50,7 +62,20 @@ const linkItems = [
         </template>
 
         <template v-slot:header>
-            header
+            <div class="flex justify-end items-center h-full pr-8 ">
+                <div>
+                    <div
+                        class="flex items-center gap-2 border-2 p-2 rounded-md border-gray-600 bg-blue-200 hover:bg-blue-100 cursor-pointer">
+                        <Avatar />
+                        <span class="capitalize">john doe</span>
+                        <i class="fa-solid fa-chevron-up rotate-180"></i>
+                    </div>
+
+                </div>
+                <Button @click="logoutHandler">
+                    Logout
+                </Button>
+            </div>
         </template>
     </Appshell>
 </template>

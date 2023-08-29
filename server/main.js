@@ -1,23 +1,73 @@
-import { Accounts } from 'meteor/accounts-base'
-import { Meteor } from 'meteor/meteor'
-import { SEED_KA } from '../imports/data'
-import { createUser } from './utils'
-import { aniAdminsCollection } from '../imports/api/collections'
+import { Accounts } from "meteor/accounts-base";
+import { Meteor } from "meteor/meteor";
+import { ROLES, SEED_KA } from "../imports/data";
+import { createUser as createUserUtils } from "./utils";
+import {
+  aniAdminsCollection,
+  contactsCollection,
+  organizationCollection,
+} from "../imports/api/collections";
+import { isAdmin } from "../imports/api/collections/aniAdminCollection";
+import {
+  getRole,
+  userOrgRoleCollection,
+} from "../imports/api/collections/UserOrgRole";
 
 Meteor.startup(async () => {
-  const { email, password, name, role } = SEED_KA
-  const user = Accounts.findUserByEmail(email)
+  const { email, password, name, role } = SEED_KA;
+  const user = Accounts.findUserByEmail(email);
 
-  const userNotFound = Boolean(user) === false
+  const userNotFound = Boolean(user) === false;
 
   if (userNotFound) {
-    createUser({
-      email, password, name, role
-    })
-
+    createUserUtils({
+      email,
+      password,
+      name,
+      role,
+    });
   }
-})
+});
 
 Meteor.publish("findAniAdmin", () => {
-  return aniAdminsCollection.find()
-})
+  return aniAdminsCollection.find();
+});
+
+Meteor.publish("organizations", function (userId) {
+  return organizationCollection.find();
+});
+
+Meteor.publish("users", function () {
+  return Meteor.users.find({});
+});
+
+Meteor.publish("userOrgRole", function () {
+  return userOrgRoleCollection.find();
+});
+
+Meteor.publish("usersInThisOrg", function (orgId) {
+  return userOrgRoleCollection.find({ orgId });
+});
+
+Meteor.publish("myContacts", function (orgId) {
+  return contactsCollection.find({ orgId });
+});
+
+Meteor.methods({
+  createOrgUser: function (data) {
+    const { email, password, name } = data;
+    const userId = createUserUtils({ email, password, name });
+    return userId;
+  },
+  getUserRole: function (userId, orgId) {
+    const isAniAdmin = isAdmin(userId);
+    if (isAniAdmin) return ROLES.ani_admin;
+
+    if (orgId) {
+      const role = getRole(userId, orgId);
+      console.log({ role }, "fdfadfa");
+      return role;
+    }
+    return "";
+  },
+});

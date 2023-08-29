@@ -1,14 +1,19 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { OrgAdminShell } from '../ui/components'
-import { LoginPage, AniAdminPage } from '../ui/pages'
-import { ROUTES } from '../data'
+import { createRouter, createWebHistory } from "vue-router";
+import { OrgAdminShell } from "../ui/components";
+import {
+  LoginPage,
+  AniAdminPage,
+  AniAdminUserPage,
+  OrgPage,
+} from "../ui/pages";
+import { ROUTES } from "../data";
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: ROUTES.login,
-      name: 'Welcome to Ani-Donation | Donate to your anime :3',
+      name: "Welcome to Ani-Donation | Donate to your anime :3",
       component: LoginPage,
     },
     {
@@ -18,10 +23,30 @@ export const router = createRouter({
         {
           path: "",
           name: "Where Everything starts",
-          component: AniAdminPage
-        }
-      ]
-    }
-
+          component: AniAdminPage,
+        },
+        {
+          path: ROUTES.aniAdmin.user,
+          name: "Create new users :)",
+          component: AniAdminUserPage,
+        },
+        {
+          path: ROUTES.aniAdmin.user,
+          name: "Create new users :)",
+          component: AniAdminUserPage,
+        },
+      ],
+    },
+    {
+      path: ROUTES.orgPage,
+      component: OrgAdminShell,
+      children: [
+        {
+          path: "",
+          name: "Organization View Page",
+          component: OrgPage,
+        },
+      ],
+    },
   ],
-})
+});
