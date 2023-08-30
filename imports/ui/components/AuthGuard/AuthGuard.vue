@@ -1,34 +1,51 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onMounted, reactive } from 'vue';
+import { getRoleplz } from '../../utils/useRole'
 
-import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
-import { aniAdminsCollection } from '../../../api/collections';
+import { aniAdminsCollection, orgUserRelationsCollection } from '../../../api/collections';
 import { ROLES } from '../../../data';
 const props = defineProps({
     requiredRoles: {
         type: Array
+    },
+    orgId: {
+        type: String
     }
 })
-const router = useRouter()
-const userId = Meteor.userId()
-const { params: { orgId } } = useRoute()
+
 const isAuthorizedRef = reactive({
-    allowAccess: true
+    allowAccess: false
 })
 
+const userId = Meteor.userId()
+const orgId = props.orgId
+
 onMounted(() => {
-    const aniAdminCollection = Meteor.subscribe("findAniAdmin")
-    const orgUserRealCollection = Meteor.subscribe("userOrgRole")
+    const roleaejaw = getRoleplz({ userId })
+    console.log({ roleaejaw }, 'ayo?')
+    const aniAdminSub = Meteor.subscribe("findAniAdmin");
 
     Tracker.autorun(() => {
 
-        const admin = aniAdminsCollection.findOne({ userId })
-        if (!!admin && props.requiredRoles?.includes(ROLES.ani_admin)) {
-            isAuthorizedRef.allowAccess = true
+        if (aniAdminSub.ready()) {
+            let user;
+            let role = ""
+
+            user = aniAdminsCollection.findOne({ userId });
+            const isAniAdmin = Boolean(user);
+            if (isAniAdmin) {
+                role = ROLES.ani_admin
+            } else {
+                user = orgUserRelationsCollection.findOne({ userId, orgId });
+                role = user?.role || ""
+            }
+
+            if (props.requiredRoles?.includes(role)) {
+                isAuthorizedRef.allowAccess = true
+            }
         }
-    })
+    });
 })
 
 

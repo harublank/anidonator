@@ -5,6 +5,7 @@ import { createUser as createUserUtils } from "./utils";
 import {
   aniAdminsCollection,
   contactsCollection,
+  orgUserRelationsCollection,
   organizationCollection,
 } from "../imports/api/collections";
 import { isAdmin } from "../imports/api/collections/aniAdminCollection";
@@ -53,6 +54,12 @@ Meteor.publish("myContacts", function (orgId) {
   return contactsCollection.find({ orgId });
 });
 
+Meteor.publish("roles", function () {
+  const aniAdmin = aniAdminsCollection.find();
+  const orgUsreReal = orgUserRelationsCollection.find();
+  return [aniAdmin, orgUsreReal];
+});
+
 Meteor.methods({
   createOrgUser: function (data) {
     const { email, password, name } = data;
@@ -61,7 +68,11 @@ Meteor.methods({
   },
   getUserRole: function (userId, orgId) {
     const isAniAdmin = isAdmin(userId);
-    if (isAniAdmin) return ROLES.ani_admin;
+    console.log({ isAniAdmin }, "from getUser role");
+    if (isAniAdmin) {
+      console.log("retrning", ROLES.ani_admin);
+      return ROLES.ani_admin;
+    }
 
     if (orgId) {
       const role = getRole(userId, orgId);
