@@ -57,8 +57,9 @@ onMounted(() => {
 
         if (isOrgReady) {
             let organizationsData: any = []
-            const isAniAdmin = checkRole({ isAniAdmin: true })
-            console.log({ isAniAdmin }, 'admin haina abw?')
+            // const isAniAdmin = checkRole({ isAniAdmin: true })
+            // console.log({ isAniAdmin }, 'admin haina abw?')
+            const isAniAdmin = false
             if (isAniAdmin) {
 
                 organizationsData = organizationCollection.find({}, {
@@ -143,7 +144,7 @@ const viewOrgHandler = (row) => {
     <h1>Welcome to Ani-donation :)</h1>
 
     <div class="flex gap-4">
-        <AuthGuard :requiredRoles="[ROLES.ani_admin, ROLES.org_admin]">
+        <AuthGuard :requiredRoles="[ROLES.ani_admin]">
             <div class="flex-1">
                 <Card title="User Management">
                     <Button @click="openUserForm">
@@ -159,9 +160,11 @@ const viewOrgHandler = (row) => {
 
         <div class="flex-1">
             <Card title="Organization Management">
-                <Button @click="openOrgForm">
-                    Create Organization
-                </Button>
+                <AuthGuard :required-roles="[ROLES.ani_admin]">
+                    <Button @click="openOrgForm">
+                        Create Organization
+                    </Button>
+                </AuthGuard>
                 <AniTable @view="viewOrgHandler" @delete="deleteOrgHandler" :data="orgDataRef.data"
                     title="Organization Table" />
             </Card>

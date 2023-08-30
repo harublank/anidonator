@@ -5,6 +5,7 @@ import { getRoleplz } from '../../utils/useRole'
 import { Tracker } from 'meteor/tracker';
 import { aniAdminsCollection, orgUserRelationsCollection } from '../../../api/collections';
 import { ROLES } from '../../../data';
+import { useRoute } from 'vue-router';
 const props = defineProps({
     requiredRoles: {
         type: Array
@@ -19,7 +20,7 @@ const isAuthorizedRef = reactive({
 })
 
 const userId = Meteor.userId()
-const orgId = props.orgId
+const { params: { orgId } } = useRoute()
 
 onMounted(() => {
     const roleaejaw = getRoleplz({ userId })
@@ -38,6 +39,7 @@ onMounted(() => {
                 role = ROLES.ani_admin
             } else {
                 user = orgUserRelationsCollection.findOne({ userId, orgId });
+                console.log({ user }, 'else bitra')
                 role = user?.role || ""
             }
 

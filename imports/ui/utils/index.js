@@ -52,10 +52,10 @@ export const useCheckUserRole = (requireRole) => {
   const userId = Meteor.userId();
   console.log("user check user role", requireRole);
 
-  const role = useGetRole({ userId, orgId });
+  // const role = useGetRole({ userId, orgId });
 
-  console.log({ role, requireRole }, "rr");
-  return role;
+  // console.log({ role, requireRole }, "rr");
+  // return role;
 };
 
 export { isOrgAdmin, isOrgCo };
