@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue';
-import { contactsCollection, organizationCollection } from '../../../api/collections';
+import { contactsCollection, organizationCollection, tagsCollection } from '../../../api/collections';
 import { useRoute } from 'vue-router';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
@@ -9,7 +9,9 @@ import { useModal } from 'vue-final-modal';
 import UserForm from '../AniAdmin/components/UserForm.vue';
 import { AddUserModal, Table as AniTAble, ContactModal } from '../../components'
 import { userOrgRoleCollection } from '../../../api/collections/UserOrgRole';
+import TagModalComponent from '../../components/ContactModal/TagModal.component.vue';
 import { ROLES } from '../../../data';
+import AssignTagsComponent from '../../components/ContactModal/AssignTags.component.vue';
 const { params: { orgId } } = useRoute()
 const userId = Meteor.userId()
 const defaultOrgInfo = { name: "", email: "", contact: "" }
@@ -26,6 +28,11 @@ const contactsInThisOrgRef = reactive({
     isLoading: false
 })
 
+const tagsRef = reactive({
+    data: [],
+    isLoading: false
+})
+
 const { open: openUserForm, close: closeUserForm } = useModal({
     component: UserForm
 })
@@ -38,8 +45,15 @@ const { open: openAddContact, close: closeAddContact } = useModal({
     component: ContactModal
 })
 
+const { open: openCreateTag, close: closeCreateTag } = useModal({
+    component: TagModalComponent
+})
+
+const { open: openAssignCreateTag, close: closeAssignCreateTag } = useModal({
+    component: AssignTagsComponent
+})
 onMounted(() => {
-    const orgSub = Meteor.subscribe("organizations", userId)
+    const orgSub = Meteor.subscribe("organizations", userId, orgId)
     Tracker.autorun(() => {
         const isOrgSubReady = orgSub.ready()
 
@@ -57,6 +71,7 @@ onMounted(() => {
             orgInfoRef.isLoading = true
         }
     })
+
 
     const usersInThisOrg = Meteor.subscribe("usersInThisOrg", orgId)
     const users = Meteor.subscribe("users")
@@ -92,10 +107,12 @@ onMounted(() => {
         if (isReady) {
             const contacts = contactsCollection.find({ orgId }, {
                 transform: (doc) => {
-                    const { email, name } = doc
+                    const { email, name, tags } = doc
+                    console.log({ tags })
                     return { email, name }
                 }
             }).fetch()
+
             contactsInThisOrgRef.isLoading = false
             contactsInThisOrgRef.data = contacts
         } else {
@@ -103,8 +120,25 @@ onMounted(() => {
         }
     })
 
-
+    const tagsSub = Meteor.subscribe("tags", orgId)
+    Tracker.autorun(() => {
+        const isReady = tagsSub.ready()
+        if (isReady) {
+            const tags = tagsCollection.find({ orgId }, {
+                transform: doc => {
+                    const { _id, label } = doc
+                    return { _id, label }
+                }
+            }).fetch()
+            tagsRef.isLoading = false
+            tagsRef.data = tags
+        } else {
+            tagsRef.isLoading = true
+        }
+    })
 })
+
+
 
 </script>
 
@@ -118,9 +152,11 @@ onMounted(() => {
     <div>
         <ButtonGroup class="mt-2">
             <!-- <AuthGuard :requiredRoles="[ROLES.ani_admin, ROLES.org_admin]"> -->
-            <Button @click="openUserForm">
-                Create User
-            </Button>
+            <AuthGuard :required-roles="[ROLES.ani_admin]">
+                <Button @click="openUserForm">
+                    Create User
+                </Button>
+            </AuthGuard>
             <!-- </AuthGuard> -->
 
             <Button @click="openAddUser">
@@ -129,6 +165,12 @@ onMounted(() => {
 
             <Button @click="openAddContact">
                 Create Contacts
+            </Button>
+            <Button @click="openCreateTag">
+                Create Tag
+            </Button>
+            <Button @click="openAssignCreateTag">
+                Assign Tag
             </Button>
         </ButtonGroup>
     </div>
@@ -146,4 +188,8 @@ onMounted(() => {
             </Card>
         </div>
     </div>
+
+    <Card title="Tags in our Org">
+        <AniTAble :data="tagsRef.data" title="Tags table" />
+    </Card>
 </template>

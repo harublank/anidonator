@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useModal } from 'vue-final-modal';
 import { Button, Card, Table as AniTable, AuthGuard } from '../../components';
 import OrgForm from './components/OrgForm.vue';
@@ -19,15 +19,17 @@ const orgForm = ref({
     mode: mode.create,
     orgId: null
 })
+const role = computed(() => {
+    return useGetRole({ userId })
+})
+const userROle = Meteor.call("getUserRole", userId)
+console.log({ userROle }, 'user role aerja na ')
+console.log("roooleee", role.value)
 const orgDataRef = reactive({
     data: [{ name: "Test Name", email: "Test email", contact: "989898" }],
     isLoading: false
 })
 
-const userForm = ref({
-    mode: mode.create,
-    orgId: null
-})
 const userDataRef = reactive({
     data: [],
     isLoading: false
@@ -35,12 +37,25 @@ const userDataRef = reactive({
 
 const router = useRouter()
 
+const userToEditRef = reactive({
+    _id: "",
+    email: "",
+    name: ""
+})
+
 const { open: openOrgForm, close: closeOrgForm } = useModal({
     component: OrgForm,
+
 })
+
 const { open: openUserForm, close: closeUserForm } = useModal({
-    component: UserForm
+    component: UserForm,
+    attrs: {
+        test: "tetst",
+        defaultValues: userToEditRef
+    }
 })
+
 
 const onCloseOrgForm = () => {
     closeOrgForm()
@@ -59,7 +74,7 @@ onMounted(() => {
             let organizationsData: any = []
             // const isAniAdmin = checkRole({ isAniAdmin: true })
             // console.log({ isAniAdmin }, 'admin haina abw?')
-            const isAniAdmin = false
+            const isAniAdmin = true
             if (isAniAdmin) {
 
                 organizationsData = organizationCollection.find({}, {
@@ -87,7 +102,7 @@ onMounted(() => {
 
             }
 
-            orgDataRef.data = organizationsData
+            orgDataRef.data = [...orgDataRef.data, ...organizationsData]
             orgDataRef.isLoading = false
         } else {
             orgDataRef.isLoading = true
@@ -108,11 +123,29 @@ onMounted(() => {
             userDataRef.isLoading = true
         }
     })
-
-
-
 })
 
+
+
+
+const viewUserHandler = (row) => {
+
+}
+
+const editUserHandler = (row) => {
+    const _id = row[2]
+    const name = row[0]
+    const email = row[1]
+
+
+    userToEditRef.value = { _id, name, email }
+    openUserForm()
+}
+
+const deleteUserHandler = (row) => {
+    const userId = row[2]
+    Meteor.call("removeUser", userId)
+}
 
 const deleteOrgHandler = (row) => {
     const orgId = row[row.length - 1 - 1]
@@ -150,10 +183,11 @@ const viewOrgHandler = (row) => {
                     <Button @click="openUserForm">
                         Create User
                     </Button>
-                    <AniTable :data="userDataRef.data" title="User Table" />
+                    <AniTable :data="userDataRef.data" title="User Table" @delete="deleteUserHandler"
+                        @edit="editUserHandler" />
                 </Card>
 
-                <UserForm @on-close="closeUserForm" />
+                <!-- <UserForm @on-close="closeUserForm" test="wtf" :defaultValues="userToEditRef.data" /> -->
             </div>
         </AuthGuard>
 

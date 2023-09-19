@@ -13,6 +13,8 @@ import {
   getRole,
   userOrgRoleCollection,
 } from "../imports/api/collections/UserOrgRole";
+import { tagsCollection } from "../imports/api/collections/tagsCollection";
+import { tagsContactCollection } from "../imports/api/collections/tagContactRelactionCollection";
 
 Meteor.startup(async () => {
   const { email, password, name, role } = SEED_KA;
@@ -34,8 +36,9 @@ Meteor.publish("findAniAdmin", () => {
   return aniAdminsCollection.find();
 });
 
-Meteor.publish("organizations", function (userId) {
+Meteor.publish("organizations", function (userId, orgId) {
   return organizationCollection.find();
+  // return [organizationCollection.find(), tagsCollection.find({ orgId })];
 });
 
 Meteor.publish("users", function () {
@@ -54,6 +57,10 @@ Meteor.publish("myContacts", function (orgId) {
   return contactsCollection.find({ orgId });
 });
 
+Meteor.publish("tags", function (orgId) {
+  return [tagsCollection.find({ orgId }), tagsContactCollection.find()];
+});
+
 Meteor.publish("roles", function () {
   const aniAdmin = aniAdminsCollection.find();
   const orgUsreReal = orgUserRelationsCollection.find();
@@ -66,9 +73,15 @@ Meteor.methods({
     const userId = createUserUtils({ email, password, name });
     return userId;
   },
+  removeUser: function (_id) {
+    Meteor.users.remove({
+      _id,
+    });
+    return true;
+  },
   getUserRole: function (userId, orgId) {
     const isAniAdmin = isAdmin(userId);
-    console.log({ isAniAdmin }, "from getUser role");
+    console.log({ isAniAdmin }, "froemove m getUser role");
     if (isAniAdmin) {
       console.log("retrning", ROLES.ani_admin);
       return ROLES.ani_admin;

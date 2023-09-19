@@ -2,33 +2,31 @@
 import { Meteor } from 'meteor/meteor';
 import { ROLES } from '../../../../data';
 import { ModalForm } from '../../../components';
+const props = defineProps(['defaultValues', 'test'])
+const emit = defineEmits(['close'])
 
+console.log({ tet: props.test })
+console.log({ defaultValues: props.defaultValues })
 const formFields = [{
     type: 'text',
     name: "name",
     placeholder: "john doe",
     required: true,
     label: "Name",
+    defaultValue: props?.defaultValues?.name
 }, {
     type: "email",
     name: "email",
     placeholder: "johndoe@anidonation.com",
     required: true,
-    label: "email"
-},
-{
-    type: "number",
-    name: "contact",
-    placeholder: "98********",
-    required: true,
-    label: "contact"
+    label: "email",
+    defaultValue: props?.defaultValues?.email
 },
 ]
 
-const emit = defineEmits(['close'])
 
-const onSubmitHandler = ({ name, email, contact }: { name: string, email: string, contact: string }) => {
-    const userId = Meteor.call('createOrgUser', { name, email, contact, password: "test123" })
+const onSubmitHandler = ({ name, email }: { name: string, email: string }) => {
+    const userId = Meteor.call('createOrgUser', { name, email, password: "test123" })
     emit('close')
 
 }

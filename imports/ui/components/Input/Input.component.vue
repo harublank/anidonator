@@ -30,11 +30,15 @@ const props = defineProps({
     required: {
         type: Boolean,
         default: false
+    },
+    defaultValue: {
+        type: String,
+        default: ""
     }
 
 })
 
-const value = ref("")
+const value = ref(props.defaultValue)
 
 watch(value, (newValue) => {
     emit("onChange", props.name, newValue)

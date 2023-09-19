@@ -4,7 +4,7 @@ import { Input, Button, ButtonGroup } from '../index'
 import { onMounted, ref } from 'vue';
 
 const props = defineProps<{
-    fields: { name: string, type: string, label: string, placeholder: string, required: boolean, options?: { label: string, value: string }[] }[]
+    fields: { name: string, defaultValue: string, type: string, label: string, placeholder: string, required: boolean, options?: { label: string, value: string }[] }[]
 }>()
 
 const emit = defineEmits(['submit', 'cancel'])
@@ -54,7 +54,7 @@ const onCancelHandler = () => {
     <form @submit.prevent="onSubmitHandler">
         <template v-for="field in props.fields" :key="field.name">
             <Input :type="field.type" :name="field.name" :placeholder="field.placeholder" @on-change="onChangeHandler"
-                v-if="field.type !== 'select'" :label="field.label" />
+                :defaultValue="field.defaultValue" v-if="field.type !== 'select'" :label="field.label" />
 
 
             <div v-else>
